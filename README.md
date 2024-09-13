@@ -1,33 +1,33 @@
-# Object-oriented_programming_FMI
-Код от лекциите по ООП спец. Софтуерно инженерство
-Код от семинарите на спец. Информационни системи и спец. Софтуерно инженерство
+OBJECT-ORIENTED PROGRAMMING AT FMI
 
-Тема 01: Преговор на указатели, референции и динамична памет. Увод в ООП. Енумерации. Структури и обединения. Инстанции и обекти. Представяния в паметта. Работа с функции, които приемат инстанции/обекти.
+Seminar Topics: Information Systems and Software Engineering Specialties
 
-Тема 02: Увод в потоците и текстовите файлове. Писане и четене в текстов файл.
+Topic 01: Review of pointers, references, and dynamic memory. Introduction to OOP. Enumerations. Structures and unions. Instances and objects. Memory representation. Working with functions that accept instances/objects.
 
-Тема 03: Двоични файлове. Четене и писане в двоичен файл.
+Topic 02: Introduction to streams and text files. Writing and reading text files.
 
-Тема 04 Член-функции. Жизнен цикъл на обект. Конструктори и деструктор. Капсулация. Модификатори за достъп. Член-функции get и set.
+Topic 03: Binary files. Reading and writing binary files.
 
-Тема 05: Разделна компилация. Препроцесор. Композиция и агрегация. Копиращ конструктор и оператор=
+Topic 04: Member functions. Object lifecycle. Constructors and destructors. Encapsulation. Access modifiers. Get and set member functions.
 
-Тема 06: Динамична памет в класовете. Голямата четворка (Rule of four).
+Topic 05: Separate compilation. Preprocessor. Composition and aggregation. Copy constructor and assignment operator (operator=).
 
-Тема 07: Предефиниране на оператори. Приятелски класове и функции
+Topic 06: Dynamic memory in classes. The Rule of Four.
 
-Тема 08: Ключова дума static. Изключения.
+Topic 07: Operator overloading. Friend classes and functions.
 
-Тема 09: Масиви от указатели към обекти. Move семантики.
+Topic 08: The static keyword. Exceptions.
 
-Тема 10: Наследяване.
+Topic 09: Arrays of pointers to objects. Move semantics.
 
-Тема 11: Статично и динамично свързване. Виртуални функции. Полиморфизъм. Абстрактни класове. Ключови думи - override, final. Виртуални таблици.
+Topic 10: Inheritance.
 
-Тема 12: Колекции от обекти в полиморфна йерархия. Копиране, триене, разпознаване. Visitor pattern. Шаблони.
+Topic 11: Static and dynamic binding. Virtual functions. Polymorphism. Abstract classes. Keywords: override, final. Virtual tables.
 
-Тема 13: Множествено наследяване. Виртуално наследяване. Виртуални таблици при множествено и виртуално наследяване. Диамантен проблем.
+Topic 12: Collections of objects in a polymorphic hierarchy. Copying, deletion, recognition. Visitor pattern. Templates.
 
-Тема 14: Дървовидна структура от обекти от полиморфна йерархия.
+Topic 13: Multiple inheritance. Virtual inheritance. Virtual tables in multiple and virtual inheritance. Diamond problem.
 
-Тема 15: Тype casting. Въведение в design patterns. Solid принципи.
+Topic 14: Tree-like structure of objects in a polymorphic hierarchy.
+
+Topic 15: Type casting. Introduction to design patterns. SOLID principles.
