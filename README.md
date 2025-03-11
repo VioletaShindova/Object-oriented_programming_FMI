@@ -1,4 +1,4 @@
-Supplement to the OBJECT-ORIENTED PROGRAMMING AT FMI Course
+Supplement to the OBJECT-ORIENTED PROGRAMMING Course AT FMI
 
 1. Enumerated Types
 2. Structures – Memory Layout. Bit Fields. Separate Compilation.
