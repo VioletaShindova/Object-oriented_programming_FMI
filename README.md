@@ -1,33 +1,17 @@
-OBJECT-ORIENTED PROGRAMMING AT FMI
+Supplement to the OBJECT-ORIENTED PROGRAMMING Course AT FMI
 
-Seminar Topics: Information Systems and Software Engineering Specialties
-
-Topic 01: Review of pointers, references, and dynamic memory. Introduction to OOP. Enumerations. Structures and unions. Instances and objects. Memory representation. Working with functions that accept instances/objects.
-
-Topic 02: Introduction to streams and text files. Writing and reading text files.
-
-Topic 03: Binary files. Reading and writing binary files.
-
-Topic 04: Member functions. Object lifecycle. Constructors and destructors. Encapsulation. Access modifiers. Get and set member functions.
-
-Topic 05: Separate compilation. Preprocessor. Composition and aggregation. Copy constructor and assignment operator (operator=).
-
-Topic 06: Dynamic memory in classes. The Rule of Four.
-
-Topic 07: Operator overloading. Friend classes and functions.
-
-Topic 08: The static keyword. Exceptions.
-
-Topic 09: Arrays of pointers to objects. Move semantics.
-
-Topic 10: Inheritance.
-
-Topic 11: Static and dynamic binding. Virtual functions. Polymorphism. Abstract classes. Keywords: override, final. Virtual tables.
-
-Topic 12: Collections of objects in a polymorphic hierarchy. Copying, deletion, recognition. Visitor pattern. Templates.
-
-Topic 13: Multiple inheritance. Virtual inheritance. Virtual tables in multiple and virtual inheritance. Diamond problem.
-
-Topic 14: Tree-like structure of objects in a polymorphic hierarchy.
-
-Topic 15: Type casting. Introduction to design patterns. SOLID principles.
+1. Enumerated Types
+2. Structures – Memory Layout. Bit Fields. Separate Compilation.
+3. Files – Basic Concepts. Text Files. Overview of fstream.
+4. Binary Files. Direct Access Operations.
+5. Classes – Idea. Visibility. Members. Declaration and Definition.
+6. Classes and Objects – Lifecycle. Constructors and Destructors. Initialization. Exceptions.
+7. More on Classes – Nesting. Static and Constant Members of a Class. Friends. Object Creation Control. Design Templates. Examples.
+8. Operator Overloading – Basic Concepts. Binary Operators.
+9. Operator Overloading – Advanced Topics. Special Operators. Usage. More Design Templates.
+10. Inheritance. Idea. Basic Concepts.
+11. Virtual Methods and Polymorphism. Abstract Classes.
+12. Multiple Inheritance. Virtual Base Classes.
+13. Templates. Idea. Specifics. Usage. Function Templates.
+14. Class Templates. Specifics. Templates in Nesting and Inheritance. Non-Type Templates.
+15. Static and Dynamic Polymorphism. Overview of the Standard Library (STL).
