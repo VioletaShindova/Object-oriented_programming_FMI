@@ -89,9 +89,7 @@ void GamePlatform::printGames() const {
 		throw "There are no games in the current list!";
 
 	for (size_t i = 0; i < this->size; i++)
-	{
 		this->games[i].print();
-	}
 }
 
 void GamePlatform::getCheapestAndMostExpensiveGame() const {
@@ -117,8 +115,8 @@ bool GamePlatform::removeGame(const Game& game) {
 	if (!(this->size - 1) || !this->size)
 		return false;
 
-	size_t gameOccurances = getOccurancesOfAGame(game);
-	Game* newGames = new Game[this->size - gameOccurances];
+	size_t gameOccurrences = getOccurrencesOfAGame(game);
+	Game* newGames = new Game[this->size - gameOccurrences];
 	for (size_t i = 0; i < this->size; i++)
 	{
 		if (this->games[i].checkIfAlike(game)) {
@@ -129,7 +127,7 @@ bool GamePlatform::removeGame(const Game& game) {
 		newGames[i] = this->games[i];
 	}
 
-	this->size -= gameOccurances;
+	this->size -= gameOccurrences;
 	this->games = new Game[this->size];
 	this->games = newGames;
 	return true;
@@ -251,4 +249,13 @@ size_t GamePlatform::getIndexOfMostExpensive() const {
 	}
 
 	return maxIndex;
+}
+
+size_t GamePlatform::getOccurrencesOfAGame(const Game& game) const {
+	size_t occurrences = 0;
+	for (size_t i = 0; i < this->size; i++) {
+		if (this->games[i].checkIfAlike(game))
+			occurrences++;
+	}
+	return occurrences;
 }

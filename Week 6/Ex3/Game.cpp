@@ -40,8 +40,6 @@ void Game::setStatus(int isAvailable) {
 
 const char* Game::getTitle() const {
 	return this->title;
-	/*const char* tempTitle = new char[strlen(this->title) + 1];
-	return tempTitle;*/
 }
 
 const float Game::getPrice() const {
@@ -62,7 +60,6 @@ void Game::print() const {
 }
 
 void Game::writeToBinaryFile(std::ofstream& ofs) const {
-
 	size_t currSizeOfTitle = strlen(title);
 	ofs.write((const char*)&currSizeOfTitle, sizeof(currSizeOfTitle));
 
@@ -97,6 +94,10 @@ void Game::readFromTextFile(std::ifstream& ifs) {
 	ifs >> price >> isAvailable;
 }
 
+bool Game::checkIfAlike(const Game& other) const {
+	return (strcmp(this->title, other.title) == 0) && (this->price == other.price);
+}
+
 bool Game::isValidTitle(const char* title) const {
 	return title && 0 < strlen(title) && strlen(title) <= MAX_TITLE_LEN;
 }
@@ -106,5 +107,5 @@ bool Game::isValidPrice(float price) const {
 }
 
 bool Game::isValidStatus(int isAvailable) const {
-	return isAvailable == 0 || isAvailable == 1;
+	return (isAvailable == 0) || (isAvailable == 1);
 }

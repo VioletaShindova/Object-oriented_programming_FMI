@@ -2,6 +2,7 @@
 #include <fstream>
 
 constexpr size_t MAX_TITLE_LEN = 64;
+
 class Game
 {
 public:
@@ -37,9 +38,7 @@ public:
 
 	void readFromTextFile(std::ifstream& ifs);
 
-	bool checkIfAlike(const Game& other) const {
-		return (strcmp(this->title, other.title) == 0) && (this->price == other.price);
-	}
+	bool checkIfAlike(const Game& other) const;
 
 private:
 	bool isValidTitle(const char* title) const;

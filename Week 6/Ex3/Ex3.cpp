@@ -79,5 +79,4 @@ int main()
 
 	cout << endl;
 	platform2.printGames();
-
 }

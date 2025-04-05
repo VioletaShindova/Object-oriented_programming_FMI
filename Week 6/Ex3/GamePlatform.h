@@ -55,15 +55,7 @@ private:
 
 	size_t getIndexOfMostExpensive() const;
 
-	size_t getOccurancesOfAGame(const Game& game) const {
-		size_t occurances = 0;
-		for (size_t i = 0; i < this->size; i++)
-		{
-			if (this->games[i].checkIfAlike(game))
-				occurances++;
-		}
-		return occurances;
-	}
+	size_t getOccurrencesOfAGame(const Game& game) const;
 
 	Game* games = nullptr;
 	size_t size = 0;
