@@ -70,9 +70,10 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const Matrix& rhs);
 
-	friend std::istream& operator>>(std::istream& is, const Matrix& rhs);
+	friend std::istream& operator>>(std::istream& is, Matrix& rhs);
 
 private:
+	int getSumOfEachMultiplyingBetweenMatrixes(const Matrix& lhs, const Matrix& rhs, size_t row, size_t col);
 	void freeDynamic();
 	void copyDynamic(const Matrix& other);
 

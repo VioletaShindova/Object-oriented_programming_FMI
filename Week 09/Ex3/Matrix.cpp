@@ -144,12 +144,15 @@ Matrix& Matrix::operator*=(int number) {
 }
 
 Matrix& Matrix::operator*=(const Matrix& rhs) {
+	Matrix result(rows, rhs.cols);  
+
 	for (size_t i = 0; i < rows; i++) {
-		for (size_t j = 0; j < cols; j++) {
-			int element = elements[i][j] * rhs.elements[i][j];
-			elements[i][j] += element;
+		for (size_t j = 0; j < rhs.cols; j++) {
+			result.elements[i][j] = getSumOfEachMultiplyingBetweenMatrixes(*this, rhs, i, j); 
 		}
 	}
+
+	*this = result;  
 
 	return *this;
 }
@@ -206,12 +209,21 @@ std::ostream& operator<<(std::ostream& os, const Matrix& rhs) {
 	return os;
 }
 
-std::istream& operator>>(std::istream& is, const Matrix& rhs) {
+std::istream& operator>>(std::istream& is, Matrix& rhs) {
 	for (size_t i = 0; i < rhs.rows; i++) {
 		for (size_t j = 0; j < rhs.cols; j++)
 			is >> rhs.elements[i][j];
 	}
 	return is;
+}
+
+int Matrix::getSumOfEachMultiplyingBetweenMatrixes(const Matrix& lhs, const Matrix& rhs, size_t row, size_t col) {
+	int sum = 0;
+	for (size_t k = 0; k < lhs.getColsConst(); k++)
+	{
+		sum += (lhs.elements[row][k] * rhs.elements[k][col]);
+	}
+	return sum;
 }
 
 void Matrix::freeDynamic() {
