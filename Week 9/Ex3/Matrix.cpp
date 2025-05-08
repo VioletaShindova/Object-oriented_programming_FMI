@@ -52,7 +52,6 @@ void Matrix::setElements(size_t rows, size_t columns) {
 	}
 }
 
-
 size_t Matrix::getRows() {
 	return rows;
 }
@@ -182,7 +181,7 @@ Matrix Matrix::operator()() const {
 
 	for (size_t i = 0; i < cols; i++) {
 		for (size_t j = 0; j < rows; j++)
-			temp.elements[i][j] = elements[i][j];
+			temp.elements[i][j] = elements[j][i];
 	}
 
 	return temp;
