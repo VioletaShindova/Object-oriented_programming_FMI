@@ -1,9 +1,8 @@
 #include "StudentDB.h"
 
-StudentDB::StudentDB() : StudentDB({}, 0, 1) {}
+StudentDB::StudentDB() : StudentDB({}, 0) {}
 
-StudentDB::StudentDB(const Student* students = {}, int size = 0, int capacity = 10) {
-	setCapacity(capacity);
+StudentDB::StudentDB(const Student* students = {}, int size = 0) {
 	setSize(size);
 	setStudents(students, capacity);
 }
@@ -27,17 +26,12 @@ StudentDB::~StudentDB() {
 	freeDynamic();
 }
 
-void StudentDB::setCapacity(int capacity) {
-	if (capacity < 1)
-		throw std::invalid_argument("Invalid capacity!");
-
-	this->capacity = capacity;
-}
 void StudentDB::setSize(int size) {
-	if (size < 0 || size >= capacity)
+	if (size < 0)
 		throw std::invalid_argument("Invalid size!");
 
 	this->size = size;
+	this->capacity = size * 2 + 1;
 }
 
 void StudentDB::setStudents(const Student* students, size_t size) {

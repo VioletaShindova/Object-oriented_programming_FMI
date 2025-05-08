@@ -3,7 +3,7 @@
 
 FilteredStudentDB::FilteredStudentDB() {}
 
-FilteredStudentDB::FilteredStudentDB(const Student* students, size_t size, size_t capacity) : StudentDB(students, size, capacity) {}
+FilteredStudentDB::FilteredStudentDB(const Student* students, size_t size) : StudentDB(students, size) {}
 
 FilteredStudentDB::FilteredStudentDB(const FilteredStudentDB& other) : StudentDB(other) {
 	copyDynamic(other);
@@ -12,20 +12,20 @@ FilteredStudentDB::FilteredStudentDB(const FilteredStudentDB& other) : StudentDB
 FilteredStudentDB::FilteredStudentDB(const StudentDB& other) : StudentDB(other) {
 	copyDynamic(other);
 }
-
-FilteredStudentDB& FilteredStudentDB::operator=(const FilteredStudentDB& other) {
-	if (this != &other) {
-		StudentDB::operator=(other);
-		freeDynamic();
-		copyDynamic(other);
-	}
-
-	return *this;
-}
-
-FilteredStudentDB::~FilteredStudentDB() {
-	freeDynamic();
-}
+//
+//FilteredStudentDB& FilteredStudentDB::operator=(const FilteredStudentDB& other) {
+//	if (this != &other) {
+//		StudentDB::operator=(other);
+//		freeDynamic();
+//		copyDynamic(other);
+//	}
+//
+//	return *this;
+//}
+//
+//FilteredStudentDB::~FilteredStudentDB() {
+//	freeDynamic();
+//}
 
 void FilteredStudentDB::filter(bool (*pred)(const Student& st)) {
 	size_t tempSize = 0;

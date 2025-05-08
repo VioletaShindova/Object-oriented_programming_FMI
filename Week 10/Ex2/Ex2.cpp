@@ -50,7 +50,7 @@ int main()
 	students[3] = st4;
 	students[4] = st5;
 	students[5] = st6;
-	StudentDB stdb(students, 6, 8);
+	StudentDB stdb(students, 6);
 
 	SortedStudentDB sstdb(stdb);
 

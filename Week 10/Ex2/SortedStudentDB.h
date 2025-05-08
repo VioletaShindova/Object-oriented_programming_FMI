@@ -6,13 +6,13 @@ class SortedStudentDB : public StudentDB
 public:
 	SortedStudentDB();
 
-	SortedStudentDB(const Student* students, int size, int capacity);
+	SortedStudentDB(const Student* students, int size);
 
 	SortedStudentDB(const StudentDB& other);
 
-	SortedStudentDB& operator=(const SortedStudentDB& other);
+	//SortedStudentDB& operator=(const SortedStudentDB& other);
 
-	~SortedStudentDB();
+	//~SortedStudentDB();
 
 	void sortBy(bool (*pred)(const Student&, const Student&));
 

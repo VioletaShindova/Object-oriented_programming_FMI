@@ -8,15 +8,13 @@ class StudentDB
 public:
 	StudentDB();
 
-	StudentDB(const Student* students, int size, int capacity);
+	StudentDB(const Student* students, int size);
 
 	StudentDB(const StudentDB& other);
 
 	StudentDB& operator=(const StudentDB& other);
 
 	~StudentDB();
-
-	void setCapacity(int capacity);
 
 	void setSize(int size);
 	
