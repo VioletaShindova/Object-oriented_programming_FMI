@@ -1,15 +1,16 @@
 #include "SortedStudentDB.h"
 
-SortedStudentDB::SortedStudentDB() : StudentDB() {}
+SortedStudentDB::SortedStudentDB() {}
 
 SortedStudentDB::SortedStudentDB(const Student* students, int size, int capacity) : StudentDB(students, size, capacity) {}
 
-SortedStudentDB::SortedStudentDB(const StudentDB& other) : StudentDB(other) {}
+SortedStudentDB::SortedStudentDB(const StudentDB& other) : StudentDB(other) {
+	copyDynamic(other);
+}
 
 SortedStudentDB& SortedStudentDB::operator=(const SortedStudentDB& other) {
 	if (this != &other) {
-		size = other.size;
-		capacity = other.capacity;
+		StudentDB::operator=(other);
 		freeDynamic();
 		copyDynamic(other);
 	}

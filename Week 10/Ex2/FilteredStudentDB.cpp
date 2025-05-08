@@ -1,7 +1,7 @@
 #include "FilteredStudentDB.h"
 #include <iostream>
 
-FilteredStudentDB::FilteredStudentDB() : StudentDB() {}
+FilteredStudentDB::FilteredStudentDB() {}
 
 FilteredStudentDB::FilteredStudentDB(const Student* students, size_t size, size_t capacity) : StudentDB(students, size, capacity) {}
 
@@ -15,8 +15,7 @@ FilteredStudentDB::FilteredStudentDB(const StudentDB& other) : StudentDB(other) 
 
 FilteredStudentDB& FilteredStudentDB::operator=(const FilteredStudentDB& other) {
 	if (this != &other) {
-		size = other.size;
-		capacity = other.capacity;
+		StudentDB::operator=(other);
 		freeDynamic();
 		copyDynamic(other);
 	}
