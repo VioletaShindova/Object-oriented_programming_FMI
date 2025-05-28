@@ -38,6 +38,29 @@ using std::endl;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Vehicle** ptr = new Vehicle * [3];
+
+    ptr[0] = new Vehicle();
+    ptr[1] = new Car();
+    ptr[2] = new Bicycle();
+
+    Vehicle** ptr1 = new Vehicle * [3];
+
+    ptr1[0] = new Vehicle(Vehicle::Color::BLACK, "abc", 2000, GlobalConstants::MIN_PASSENGERS_CAPACITY, GlobalConstants::MIN_SPEED_CAPACITY);
+    ptr1[1] = new Car(*ptr1[0], "car1", GlobalConstants::MIN_DOORS_COUNT, GlobalConstants::MIN_CAR_HORSEPOWER);
+    ptr1[2] = new Bicycle(Vehicle::Color::BLACK, "abc", 2000, GlobalConstants::MIN_PASSENGERS_CAPACITY, GlobalConstants::MIN_SPEED_CAPACITY, GlobalConstants::MIN_SIZE_GEARS, true, true);
+
+
+
+
+    for (size_t i = 0; i < 3; i++)
+        delete ptr[i];
+
+    delete[] ptr;
+
+    for (size_t i = 0; i < 3; i++)
+        delete ptr1[i];
+
+    delete[] ptr1;
 }
 

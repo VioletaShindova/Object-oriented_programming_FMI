@@ -24,6 +24,8 @@ public:
 		int passengers_Capacity, int maximum_Speed_Capacity, 
 		const std::string model, int count_Of_Doors, int engine_HorsePower);
 
+	Car(const Vehicle& other, const std::string model, int count_Of_Doors, int engine_HorsePower);
+
 	inline std::string getModel() const noexcept { return _model; }
 
 	inline size_t getCount_Of_Doors() const noexcept { return _count_Of_Doors; }

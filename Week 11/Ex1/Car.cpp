@@ -2,7 +2,9 @@
 
 Car::Car() : Car("unknown", GlobalConstants::MIN_DOORS_COUNT, GlobalConstants::MIN_CAR_HORSEPOWER) {}
 
-Car::Car(const std::string model, int count_Of_Doors, int engine_HorsePower) : Vehicle(), _model(model) {
+Car::Car(const std::string model, int count_Of_Doors, int engine_HorsePower) 
+	: Vehicle(), _model(model) 
+{
 	setDoorsCount(count_Of_Doors);
 	setEngineHorsePower(engine_HorsePower);
 }
@@ -11,7 +13,15 @@ Car::Car(Color color, const char* brand, int year_Of_Manufacture,
 	int passengers_Capacity, int maximum_Speed_Capacity,
 	const std::string model, int count_Of_Doors,
 	int engine_HorsePower)
-	: Vehicle(color, brand, year_Of_Manufacture, passengers_Capacity, maximum_Speed_Capacity), _model(model) {
+	: Vehicle(color, brand, year_Of_Manufacture, passengers_Capacity, maximum_Speed_Capacity), _model(model) 
+{
+	setDoorsCount(count_Of_Doors);
+	setEngineHorsePower(engine_HorsePower);
+}
+
+Car::Car(const Vehicle& other, const std::string model, int count_Of_Doors, int engine_HorsePower)
+	: Vehicle(other), _model(model) 
+{
 	setDoorsCount(count_Of_Doors);
 	setEngineHorsePower(engine_HorsePower);
 }

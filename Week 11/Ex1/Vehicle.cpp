@@ -69,10 +69,15 @@ void Vehicle::setSpeedCapacity(int maximum_Speed_Capacity) {
 }
 
 void Vehicle::setBrand(const char* brand) {
-	delete[] _brand;
+	if (!brand)
+		throw std::invalid_argument("Invalid brand");
 
-	_brand = new (std::nothrow) char[strlen(brand) + 1];
+	char* temp = new (std::nothrow) char[strlen(brand) + 1];
 
-	if (!_brand)
+	if (!temp)
 		throw std::bad_alloc();
+
+	strcpy(temp, brand);
+	delete[] _brand;
+	_brand = temp;
 }
