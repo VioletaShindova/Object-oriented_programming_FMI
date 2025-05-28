@@ -1,0 +1,5 @@
+Penguin - 0
+Pacman - 2
+computerBoy - 3
+squidward  - 4
+sylvester - 1500
