@@ -53,16 +53,69 @@ std::string formatTimeYYMMDDhhmmss(std::time_t t) {
     return std::string(buffer);
 }
 
+std::chrono::year_month_day parseDate(const std::string& dateStr)
+{
+    std::vector<std::string> parts = split(dateStr, '-');
+
+    if (parts.size() != 3)
+        throw std::runtime_error("Invalid date format. Expected YYYY-MM-DD");
+
+    int year = parseToInt(parts[0]);
+    int month = parseToInt(parts[1]);
+    int day = parseToInt(parts[2]);
+
+    return std::chrono::year_month_day{
+        std::chrono::year{year},
+        std::chrono::month{static_cast<unsigned>(month)},
+        std::chrono::day{static_cast<unsigned>(day)}
+    };
+}
+
 int parseToInt(const std::string& text)
 {
-    size_t textSize = text.size();
     int number = 0;
-    for (size_t i = 0; i < textSize; i++)
+    for (char ch : text)
     {
-        if ('0' <= text[i] && text[i] <= '9') {
-            (number += (text[i] - '0'));
-            number *= 10;
+        if ('0' <= ch && ch <= '9') {
+            number = number * 10 + (ch - '0');
         }
     }
     return number;
+}
+
+bool isCorrectISBN(const char* ISBN)
+{
+    if (!ISBN)
+        return false;
+
+    size_t dashCounter = 0;
+    size_t digitCounter = 0;
+
+    const char* ptr = ISBN;
+    while (*ptr)
+    {
+        if (*ptr == '-')
+            dashCounter++;
+        else if (isdigit(*ptr))
+            digitCounter++;
+        else
+            return false; // invalid character
+
+        ptr++;
+    }
+
+    return dashCounter == 4 && digitCounter == 13;
+}
+
+bool isCorrectISSN(const char* ISSN)
+{
+    for (int i = 0; i < 9; ++i) {
+        if (i == 4) {
+            if (ISSN[i] != '-') return false;
+        }
+        else {
+            if (!isdigit(ISSN[i])) return false;
+        }
+    }
+    return true;
 }

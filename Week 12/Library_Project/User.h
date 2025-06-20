@@ -22,6 +22,7 @@ public:
 
 	const std::chrono::year_month_day& getYMD() const noexcept;
 	const std::time_t& getLastLogInDate() const noexcept;
+	std::time_t& getLastLogInDate() noexcept;
 
 	void setLastLogInDate() const;
 
@@ -29,15 +30,18 @@ public:
 
 	virtual void print(std::ostream& os) const;
 
+	virtual void saveAllToFile(std::ofstream& ofs) const = 0; //meaning flush all info when the dtor of library is called
+
+	virtual std::string getType() const = 0;
+
 	//friend std::ostream& operator<<(std::ostream& os, const User& user);
 
 protected:
 	void setYMD();
-
+	std::chrono::year_month_day ymd; //includes only year, month and day
 private:
 	std::string username;
 	std::string password;
-	std::chrono::year_month_day ymd; //includes only year, month and day
 	mutable std::time_t lastLogInDate; //includes date and time
 };
 

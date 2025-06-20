@@ -2,7 +2,66 @@
 
 Library::Library() : currentLoggedUser(nullptr)
 {
-	users.push_back(new Administrator("admin", "i<3c++", "admin@library.com"));
+	Item::readIDFromTextFile("lastID.txt");
+	deserialize();
+
+	if (users.empty()) 
+	{
+		users.push_back(new Administrator("admin", "i<3c++", "admin@library.com"));
+	}
+}
+
+Library::Library(const std::vector<User*>& users, const std::vector<Item*>& items)
+{
+	Item::readIDFromTextFile("lastID.txt");
+	setUsers(users);
+	setItems(items);
+}
+
+Library::Library(const Library& other)
+{
+	copyDynamic(other);
+}
+
+Library& Library::operator=(const Library& other)
+{
+	if (this != &other) 
+	{
+		freeDynamic();
+		copyDynamic(other);
+	}
+	return *this;
+}
+
+Library::~Library()
+{
+	serialize();
+	Item::writeIDToTextFile("lastID.txt");
+	freeDynamic();
+}
+
+void Library::setUsers(const std::vector<User*>& users)
+{
+	if (users.empty())
+		throw std::invalid_argument("Empty user list is not allowed!");
+
+	for (User* user : users) {
+		if (user) {
+			this->users.push_back(user->clone());
+		}
+	}
+}
+
+void Library::setItems(const std::vector<Item*>& items)
+{
+	if (items.empty())
+		throw std::invalid_argument("Empty item list is not allowed!");
+
+	for (Item* item : items) {
+		if (item) {
+			this->items.push_back(item->clone());
+		}
+	}
 }
 
 const std::vector<User*>& Library::getUsers() const noexcept
@@ -36,24 +95,32 @@ void Library::run()
 		Command* currCmd = CommandFactory::createCommand(command, *this);
 
 		if (!currCmd) {
-			std::cout << "Unknown command\n";
+			std::cout << "Unknown command. Type 'help' to see all commands\n";
 			continue;
 		}
 
+		/*if (currCmd->isExcutable()) { //must be added
+
+		}*/
 		try {
 			currCmd->execute();
+		}
+		catch (std::string& message) {
+			std::cout << message;
+			delete currCmd;
+			break;
 		}
 		catch (std::exception& e) {
 			std::cout << e.what();
 		}
 
-		delete[] currCmd;
+		delete currCmd;
 	}
 }
 
 void Library::login(const User* user)
 {
-	currentLoggedUser = user;
+	currentLoggedUser = user->clone();
 	user->setLastLogInDate();
 	std::cout << "Welcome, " << user->getUsername() << std::endl;
 }
@@ -304,25 +371,41 @@ Item* Library::getInfoOfItem(const std::string& fileName, const std::string& isb
 	return nullptr;
 }
 
-static Item* readBook(std::ifstream& ifs) {
+static Item* readBook(std::ifstream& ifs) 
+{
 	std::string line = readLine(ifs);
+
+	if (line.empty())
+		return nullptr;
+
 	std::vector<std::string> tokens = split(line, ',');
 
-	if (tokens.size() < 9)
-		throw std::runtime_error("Invalid book format!");
+	if (tokens.size() < 10)
+		return nullptr;
 
-	std::string title = tokens[1];
-	std::string publisher = tokens[2];
-	std::string genre = tokens[3];
-	std::string description = tokens[4];
-	int year = parseToInt(tokens[5]);
-	int rating = parseToInt(tokens[6]);
-	std::string author = tokens[7];
+	try {
+		unsigned id = parseToInt(tokens[0]);
+		std::string title = tokens[1];
+		std::string publisher = tokens[2];
+		std::string genre = tokens[3];
+		std::string description = tokens[4];
+		int yearPublished = parseToInt(tokens[5]);
+		int rating = parseToInt(tokens[6]);
+		std::string author = tokens[7];
+		std::vector<std::string> keywords = split(tokens[8], '~');
+		std::string isbn = tokens[9];
 
-	std::vector<std::string> keyWords = split(tokens[8], '~');
-	std::string isbn = tokens[9];
+		if (!isCorrectISBN(isbn.c_str()))
+			return nullptr;
 
-	return new Book(title, publisher, genre, description, year, rating, author, keyWords, isbn.c_str());
+		Book* book = new Book(title, publisher, genre, description,
+			yearPublished, rating, author, keywords, isbn.c_str());
+
+		return book;
+	}
+	catch (...) {
+		return nullptr;
+	}
 }
 
 static Item* readPeriodical(std::ifstream& ifs) {
@@ -417,4 +500,176 @@ std::vector<Item*> Library::getItemsFromFile(const std::string& filename) const
 	ifs.close();
 
 	return result;
+}
+
+void Library::serialize() const
+{
+	std::ofstream usersAll("users.txt");
+	std::ofstream readers("readers.txt");
+	std::ofstream admins("administrators.txt");
+
+	for (const User* user : users) {
+		if (!user) continue;
+
+		user->saveAllToFile(usersAll);
+
+		if (user->getType() == "Reader")
+			user->saveAllToFile(readers);
+		else if (user->getType() == "Administrator")
+			user->saveAllToFile(admins);
+	}
+
+	std::ofstream itemsAll("items.txt");
+	std::ofstream books("books.txt");
+	std::ofstream newsletters("newsletters.txt");
+	std::ofstream series("series.txt");
+
+	for (const Item* item : items) {
+		if (!item) continue;
+
+		item->saveAllToFile(itemsAll);
+
+		std::string type = item->getType();
+		if (type == "Book")
+			item->saveAllToFile(books);
+		else if (type == "Periodical")
+			item->saveAllToFile(newsletters);
+		else if (type == "Series")
+			item->saveAllToFile(series);
+	}
+
+	usersAll.close();
+	readers.close();
+	admins.close();
+	itemsAll.close();
+	books.close();
+	newsletters.close();
+	series.close();
+}
+
+void Library::deserialize()
+{
+	std::ifstream usersAll("users.txt");
+	std::ifstream readers("readers.txt");
+	std::ifstream admins("administrators.txt");
+	std::ifstream itemsAll("items.txt");
+	std::ifstream books("books.txt");
+	std::ifstream newsletters("newsletters.txt");
+	std::ifstream series("series.txt");
+
+	if (!usersAll.is_open() || !readers.is_open() || !admins.is_open() || !itemsAll.is_open() || !books.is_open() || !newsletters.is_open() || !series.is_open())
+		throw std::runtime_error("Failed to open one or more input files");
+
+	std::string line;
+
+	// --- Deserialize users ---
+	while (std::getline(readers, line)) {
+		if (line.empty()) 
+			continue;
+
+		User* reader = Reader::loadFromFile(line);  // static function that returns new Reader*
+		if (reader)
+			users.push_back(reader);
+	}
+
+	while (std::getline(admins, line)) {
+		if (line.empty()) 
+			continue;
+
+		User* admin = Administrator::loadFromFile(line);  // static function that returns new Administrator*
+		if (admin)
+			users.push_back(admin);
+	}
+
+	// --- Deserialize items ---
+	while (std::getline(books, line)) {
+		if (line.empty()) 
+			continue;
+
+		Item* book = Book::loadFromFile(line);  // static function that returns new Book*
+		if (book)
+			items.push_back(book);
+	}
+
+	while (std::getline(newsletters, line)) {
+		if (line.empty())
+			continue;
+
+		Item* periodical = Periodical::loadFromFile(line);
+		if (periodical)
+			items.push_back(periodical);
+	}
+
+	while (std::getline(series, line)) {
+		if (line.empty()) 
+			continue;
+
+		Item* seriesItem = Series::loadFromFile(line);
+		if (seriesItem)
+			items.push_back(seriesItem);
+	}
+
+	usersAll.close();
+	readers.close();
+	admins.close();
+	itemsAll.close();
+	books.close();
+	newsletters.close();
+	series.close();
+}
+
+std::vector<Item*> Library::getOnlyOneTypeOfItem(const std::string& typeItem) const
+{
+	std::vector<Item*> result;
+	for (Item* item : items) {
+		if (item && item->getType() == typeItem) //or use dynamic_cast
+			result.push_back(item);
+	}
+	return result;
+}
+
+std::vector<User*> Library::getOnlyOneTypeOfUser(const std::string& typeUser) const
+{
+	std::vector<User*> result;
+	for (User* user : users) {
+		if (user && user->getType() == typeUser) //or use dynamic_cast
+			result.push_back(user);
+	}
+	return result;
+}
+
+void Library::copyDynamic(const Library& other)
+{
+	for (User* u : other.users)
+		users.push_back(u->clone()); //return deep copy
+
+	for (Item* i : other.items)
+		items.push_back(i->clone());
+
+	currentLoggedUser = nullptr;
+
+	if (other.currentLoggedUser != nullptr)
+	{
+		for (User* u : users)
+		{
+			if (u->getUsername() == other.currentLoggedUser->getUsername())
+			{
+				currentLoggedUser = u;
+				break;
+			}
+		}
+	}
+}
+
+void Library::freeDynamic()
+{
+	for (User* user : users)
+		delete user;
+	users.clear();
+
+	for (Item* item : items)
+		delete item;
+	items.clear(); 
+
+	currentLoggedUser = nullptr;
 }

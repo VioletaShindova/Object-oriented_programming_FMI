@@ -93,7 +93,7 @@ Periodical::Periodical(const Item& obj, int monthPublished, int count, const cha
 
 bool Periodical::isValidMonth(int monthPublished) const
 {
-	return (int)Month::JANUARY <= monthPublished && monthPublished <= (int)Month::DECEMBER;
+	return ((int)Month::JANUARY <= monthPublished) && (monthPublished <= (int)Month::DECEMBER);
 }
 
 void Periodical::setMonthPublished(int monthPublished)
@@ -116,25 +116,9 @@ static bool isDigit(char symbol) {
 	return '0' <= symbol && symbol <= '9';
 }
 
-static bool isCorrectISSN(const char* ISSN)
-{
-	size_t currentSize = 0;
-	while (currentSize < (GlobalConstants::SIZE_ISSN - 1) / 2) {
-		if (!isDigit(*ISSN))
-			return false;
-
-		currentSize++;
-	}
-	return true;
-}
-
 bool Periodical::isValidISSN(const char* ISSN) const
 {
-	return (ISSN &&
-			strlen(ISSN) == GlobalConstants::SIZE_ISSN &&
-			isCorrectISSN(ISSN) && 
-			(ISSN[(GlobalConstants::SIZE_ISSN - 1) / 2] == '-') &&
-			isCorrectISSN(ISSN + 5));
+	return (ISSN && strlen(ISSN) == GlobalConstants::SIZE_ISSN && isCorrectISSN(ISSN));
 }
 
 void Periodical::setISSN(const char* ISSN)
@@ -208,41 +192,30 @@ Item* Periodical::clone() const
 void Periodical::saveToFile(const std::string& fileName) const
 {
 	//Item::saveToFile(fileName);
-
+	
 	if (fileName.empty())
 		throw std::invalid_argument("Invalid file name\n");
 
 	std::ofstream ofs(fileName, std::ios::app);
-
 	if (!ofs.is_open())
 		throw std::runtime_error("Can't open file\n");
 
 	ofs << getID() << "," << getTitle() << "," << getPublisher() << "," << getGenre() << ","
-		<< getDescription() << "," << getYearPublished() << "," << getRating() 
+		<< getDescription() << "," << getYearPublished() << "," << getRating() << ","  // << FIXED HERE
 		<< static_cast<int>(monthPublished) << "," << count << "," << ISSN;
 
 	const std::vector<Contents>& allContents = getContent();
-
-	if (!allContents.empty())
-	{
+	if (!allContents.empty()) {
 		ofs << "|";
-
-		for (size_t i = 0; i < allContents.size(); ++i)
-		{
+		for (size_t i = 0; i < allContents.size(); ++i) {
 			const Contents& content = allContents[i];
-
-			// Format for each content: ContentTitle`ContentAuthor`kw1^kw2^kw3
 			ofs << content.getContentTitle() << "`" << content.getContentAuthor() << "`";
-
 			const std::vector<std::string>& kws = content.getContentKeyWords();
-			for (size_t j = 0; j < kws.size(); ++j)
-			{
+			for (size_t j = 0; j < kws.size(); ++j) {
 				ofs << kws[j];
-
 				if (j != kws.size() - 1)
 					ofs << "^";
 			}
-
 			if (i != allContents.size() - 1)
 				ofs << "|";
 		}
@@ -250,4 +223,80 @@ void Periodical::saveToFile(const std::string& fileName) const
 
 	ofs << std::endl;
 	ofs.close();
+}
+
+void Periodical::saveAllToFile(std::ofstream& ofs) const
+{
+	if (!ofs.is_open() || !ofs.good())
+		throw std::runtime_error("Invalid stream\n");
+
+	ofs << getID() << "," << getTitle() << "," << getPublisher() << "," << getGenre() << ","
+		<< getDescription() << "," << getYearPublished() << "," << getRating() << ","  // << FIXED HERE
+		<< static_cast<int>(monthPublished) << "," << count << "," << ISSN;
+
+	const std::vector<Contents>& allContents = getContent();
+	if (!allContents.empty()) {
+		ofs << "|";
+		for (size_t i = 0; i < allContents.size(); ++i) {
+			const Contents& content = allContents[i];
+			ofs << content.getContentTitle() << "`" << content.getContentAuthor() << "`";
+			const std::vector<std::string>& kws = content.getContentKeyWords();
+			for (size_t j = 0; j < kws.size(); ++j) {
+				ofs << kws[j];
+				if (j != kws.size() - 1)
+					ofs << "^";
+			}
+			if (i != allContents.size() - 1)
+				ofs << "|";
+		}
+	}
+
+	ofs << std::endl;
+}
+
+std::string Periodical::getType() const
+{
+	return "Periodical";
+}
+
+Periodical* Periodical::loadFromFile(const std::string& line)
+{
+	size_t sep = line.find('|');
+	if (sep == std::string::npos)
+		throw std::runtime_error("Invalid periodical format: missing content separator");
+
+	std::vector<std::string> meta = split(line.substr(0, sep), ',');
+	if (meta.size() < 10)
+		throw std::runtime_error("Invalid periodical metadata format");
+
+	std::vector<std::string> rawContents = split(line.substr(sep + 1), '|');
+
+	unsigned id = parseToInt(meta[0]);
+	std::string title = meta[1];
+	std::string publisher = meta[2];
+	std::string genre = meta[3];
+	std::string description = meta[4];
+	int yearPublished = parseToInt(meta[5]);
+	int rating = parseToInt(meta[6]);
+	int monthPublished = parseToInt(meta[7]);
+	int count = parseToInt(meta[8]);
+	std::string ISSN = meta[9];
+
+	std::vector<Contents> parsedContents;
+	for (const std::string& content : rawContents) {
+		std::vector<std::string> parts = split(content, '`');
+		if (parts.size() != 3)
+			throw std::runtime_error("Invalid content format in periodical");
+
+		std::string cTitle = parts[0];
+		std::string cAuthor = parts[1];
+		std::vector<std::string> cKeywords = split(parts[2], '^');
+
+		parsedContents.emplace_back(cTitle, cAuthor, cKeywords);
+	}
+
+	Periodical* p = new Periodical(title, publisher, genre, description,
+		yearPublished, rating, monthPublished, count, ISSN.c_str(), parsedContents);
+
+	return p;
 }

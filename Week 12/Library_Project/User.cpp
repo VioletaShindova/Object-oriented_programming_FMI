@@ -45,6 +45,11 @@ const std::time_t& User::getLastLogInDate() const noexcept
 	return lastLogInDate;
 }
 
+std::time_t& User::getLastLogInDate() noexcept
+{
+	return lastLogInDate;
+}
+
 void User::setYMD()
 {
 	std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();

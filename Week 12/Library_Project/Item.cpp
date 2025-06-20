@@ -5,7 +5,7 @@ unsigned Item::currentID = 1;
 Item::Item():Item("unknown", "unknown", "unknown", "unknown", 0, 0) {}
 
 Item::Item(const std::string& title, const std::string& publisher, const std::string& genre, const std::string& description, int yearPublished, int rating)
-	: title("unknown"), publisher("unknown"), genre("unknown"), description("unknown"), yearPublished(0), rating(0), id(currentID++)
+	: title("unknown"), publisher("unknown"), genre("unknown"), description("unknown"), yearPublished(0), rating(0)
 {
 	setTitle(title);
 	setPublisher(publisher);
@@ -13,6 +13,10 @@ Item::Item(const std::string& title, const std::string& publisher, const std::st
 	setDescription(description);
 	setYearPublished(yearPublished);
 	setRating(rating);
+
+	readIDFromTextFile("lastID.txt");
+	id = currentID++;
+	writeIDToTextFile("lastID.txt");
 }
 
 void Item::setTitle(const std::string& title)
@@ -96,6 +100,36 @@ unsigned Item::getRating() const noexcept
 unsigned Item::getID() const noexcept
 {
 	return id;
+}
+
+void Item::writeIDToTextFile(const char* fileName)
+{
+	if (!fileName)
+		throw std::invalid_argument("Invalid file name\n");
+
+	std::ofstream ofs(fileName);
+
+	if (!ofs.is_open())
+		throw std::runtime_error("Can't open file\n");
+
+	ofs << currentID;
+
+	ofs.close();
+}
+
+void Item::readIDFromTextFile(const char* fileName)
+{
+	if (!fileName)
+		throw std::invalid_argument("Invalid file name\n");
+
+	std::ifstream ifs(fileName);
+
+	if (!ifs.is_open())
+		throw std::runtime_error("Can't open file\n");
+
+	ifs >> currentID;
+
+	ifs.close();
 }
 
 //void Item::saveToFile(const std::string& fileName) const

@@ -1,9 +1,7 @@
 #include "AddCommand.h"
 
 AddUserCommand::AddUserCommand(const std::string& username, const std::string& password, bool isAdmin, Library& lib)
-	: Command(lib), username(username), password(password), isAdmin(isAdmin)
-{
-}
+	: Command(lib), username(username), password(password), isAdmin(isAdmin) {}
 
 void AddUserCommand::execute() const
 {

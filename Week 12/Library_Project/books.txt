@@ -1,4 +1,3 @@
-1,1984,Secker & Warburg,Dystopian,A novel about a totalitarian regime,19490,90,George Orwell,dystopia~surveillance~totalitarian,978-0-13-110362-7
-1,The Clean Coder,Prentice Hall,Software Engineering,A Code of Conduct for Professional Programmers,20110,90,Robert C. Martin,clean~coding~professionalism~discipline,978-0-13-708107-3
-2,Introduction to Algorithms,MIT Press,Computer Science,Widely used textbook on algorithms and data structures,20090,100,Thomas H. Cormen,algorithms~complexity~structures~recursion,978-0-262-03384-8
-3,Zero to One,Crown Business,Entrepreneurship,Notes on startups, or how to build the future,20140,80,Peter Thiel,startups~innovation~business~monopoly,978-0-8041-3929-8
+58,Az,fasd,asd,asd,2000000,8000,Az,kfqef~feq,978-3-16-148410-0
+59,feiowg,hfieowg,weoughw,owiehg,2010000,9000,ghuowg,hfeow~jipfew,978-3-16-148410-2
+60,jirpewgy,niopgrw,ipgrw,jigprwh,2020,4,hiohubu0,niogw~jpgw,978-3-16-148410-9

@@ -1,4 +1,4 @@
-#include "Series.h"
+﻿#include "Series.h"
 
 Series::Series() : Book(), Periodical(), Item() {}
 
@@ -51,15 +51,12 @@ void Series::saveToFile(const std::string& fileName) const
 	ofs << getID() << "," << getTitle() << "," << getPublisher() << "," << getGenre() << ","
 		<< getDescription() << "," << getYearPublished() << "," << getRating();
 
-	// Periodical (monthPublished, count, ISSN)
 	ofs << "," << static_cast<int>(getMonthPublished()) << ","
 		<< getCount() << ","
 		<< getISSN() << ",";
 
-	// author of Book
 	ofs << getAuthor() << ",";
 
-	// keywords of Book, separated with ~
 	const std::vector<std::string>& kws = getKeyWords();
 	for (size_t i = 0; i < kws.size(); ++i) {
 		ofs << kws[i];
@@ -68,10 +65,8 @@ void Series::saveToFile(const std::string& fileName) const
 	}
 	ofs << ",";
 
-	// ISBN of Book
 	ofs << getISBN();
 
-	// Contents of periodical
 	const std::vector<Contents>& contents = getContent();
 	if (!contents.empty()) {
 		ofs << "|";
@@ -91,4 +86,97 @@ void Series::saveToFile(const std::string& fileName) const
 
 	ofs << std::endl;
 	ofs.close();
+}
+
+void Series::saveAllToFile(std::ofstream& ofs) const
+{
+	if (!ofs.is_open() || !ofs.good())
+		throw std::runtime_error("Something wrong with stream - it is either bad or it can't be opened\n");
+
+	ofs << getID() << "," << getTitle() << "," << getPublisher() << "," << getGenre() << ","
+		<< getDescription() << "," << getYearPublished() << "," << getRating();
+
+	ofs << "," << static_cast<int>(getMonthPublished()) << ","
+		<< getCount() << ","
+		<< getISSN() << ",";
+
+	ofs << getAuthor() << ",";
+
+	const std::vector<std::string>& kws = getKeyWords();
+	for (size_t i = 0; i < kws.size(); ++i) {
+		ofs << kws[i];
+		if (i != kws.size() - 1)
+			ofs << "~";
+	}
+	ofs << ",";
+
+	ofs << getISBN();
+
+	const std::vector<Contents>& contents = getContent();
+	if (!contents.empty()) {
+		ofs << "|";
+		for (size_t i = 0; i < contents.size(); ++i) {
+			const Contents& singleContent = contents[i];
+			ofs << singleContent.getContentTitle() << "`" << singleContent.getContentAuthor() << "`";
+			const std::vector<std::string>& singleContentKW = singleContent.getContentKeyWords();
+			for (size_t j = 0; j < singleContentKW.size(); ++j) {
+				ofs << singleContentKW[j];
+				if (j != singleContentKW.size() - 1)
+					ofs << "^";
+			}
+			if (i != contents.size() - 1)
+				ofs << "|";
+		}
+	}
+
+	ofs << std::endl;
+}
+
+std::string Series::getType() const
+{
+	return "Series";
+}
+
+Series* Series::loadFromFile(const std::string& line)
+{
+	size_t sep = line.find('|');
+	if (sep == std::string::npos)
+		throw std::runtime_error("Invalid series format: missing '|'");
+
+	std::vector<std::string> beforePipe = split(line.substr(0, sep), ',');
+	if (beforePipe.size() < 13)
+		throw std::runtime_error("Invalid series metadata format");
+
+	std::vector<std::string> afterPipe = split(line.substr(sep + 1), '|');
+
+	unsigned id = parseToInt(beforePipe[0]);
+	std::string title = beforePipe[1];
+	std::string publisher = beforePipe[2];
+	std::string genre = beforePipe[3];
+	std::string description = beforePipe[4];
+	int yearPublished = parseToInt(beforePipe[5]);
+	double rating = std::stod(beforePipe[6]);  // ако rating е double
+	int monthPublished = parseToInt(beforePipe[7]);
+	int count = parseToInt(beforePipe[8]);
+	std::string ISSN = beforePipe[9];
+	std::string author = beforePipe[10];
+	std::vector<std::string> keyWords = split(beforePipe[11], '~');
+	std::string ISBN = beforePipe[12];
+
+	std::vector<Contents> parsedContents;
+	for (const std::string& content : afterPipe) {
+		std::vector<std::string> parts = split(content, '`');
+		if (parts.size() != 3)
+			throw std::runtime_error("Invalid content format in series");
+
+		std::string cTitle = parts[0];
+		std::string cAuthor = parts[1];
+		std::vector<std::string> cKeywords = split(parts[2], '^');
+		parsedContents.emplace_back(cTitle, cAuthor, cKeywords);
+	}
+
+	Series* s = new Series(author, title, publisher, genre, description,
+		yearPublished, monthPublished, count, keyWords, rating, ISBN.c_str(), ISSN.c_str(), parsedContents);
+
+	return s;
 }

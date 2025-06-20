@@ -60,7 +60,13 @@ static std::string determineFile(const std::string& category) {
 //--------------------------------------------------------------------------------------------------------
 Command* CommandFactory::createCommand(const std::string& command, Library& lib)
 {
-	if (command == "login") {
+	if (command == "help") {
+		return new HelpCommand(lib);
+	}
+	else if (command == "exit") {
+		return new ExitCommand(lib);
+	}
+	else if (command == "login") {
 
 		std::cout << "Enter username: ";
 		std::string username = readLine(std::cin);
@@ -84,19 +90,19 @@ Command* CommandFactory::createCommand(const std::string& command, Library& lib)
 		}
 	}
 	else if (command == "users all") {
-		return new PrintCommand(lib, "users.txt");
+		return new PrintCommand(lib, lib.getUsers());
 	}
 	else if (command == "books all") {
-		return new PrintCommand(lib, "books.txt");
+		return new PrintCommand(lib, lib.getOnlyOneTypeOfItem("Book"));
 	}
 	else if (command == "newsletters all") {
-		return new PrintCommand(lib, "newsletters.txt");
+		return new PrintCommand(lib, lib.getOnlyOneTypeOfItem("Periodical"));
 	}
 	else if (command == "series all") {
-		return new PrintCommand(lib, "series.txt");
+		return new PrintCommand(lib, lib.getOnlyOneTypeOfItem("Series"));
 	}
 	else if (command == "list all") {
-		return new PrintCommand(lib, "list.txt");
+		return new PrintCommand(lib, lib.getItems());
 	}
 	else if (isPrefix(command, "list info")) {
 		std::vector<std::string> splittedCommand = split(command, ' ');
@@ -191,5 +197,3 @@ Command* CommandFactory::createCommand(const std::string& command, Library& lib)
 	}
 	return nullptr;
 }
-
-//------------------------

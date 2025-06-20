@@ -1,11 +1,12 @@
 #pragma once
 #include "Item.h"
+#include "HelperFunctions.h"
 #include <fstream>
 #include <string>
 #include <vector>
 
 namespace GlobalConstants {
-	constexpr size_t SIZE_ISBN = 17; //13 digits and 4 '-' since 2007 to this day
+	constexpr size_t SIZE_ISBN = 20; //13 digits and 4 '-' since 2007 to this day
 }
 
 class Book : virtual public Item
@@ -34,7 +35,13 @@ public:
 	Item* clone() const override;
 	void print() const override;
 
-	void saveToFile(const std::string& fileName) const;
+	void saveToFile(const std::string& fileName) const override;
+
+	void saveAllToFile(std::ofstream& ofs) const override;	
+
+	std::string getType() const override;
+
+	static Book* loadFromFile(const std::string& line);
 
 private:
 	std::string author;

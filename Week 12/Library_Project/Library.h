@@ -14,8 +14,15 @@
 class Library
 {
 public:
+	//don't check in files
 	Library();
 	Library(const std::vector<User*>& users, const std::vector<Item*>& items);
+	Library(const Library& other);
+	Library& operator=(const Library& other);
+	~Library();
+
+	void setUsers(const std::vector<User*>& users);
+	void setItems(const std::vector<Item*>& items);
 
 	const std::vector<User*>& getUsers() const noexcept;
 	const std::vector<Item*>& getItems() const noexcept;
@@ -40,10 +47,20 @@ public:
 	Item* getInfoOfItem(const std::string& fileName, const std::string& isbnOrIssn);
 
 	std::vector<Item*> getItemsFromFile(const std::string& filename) const;
+
+	void serialize() const;
+
+	void deserialize();
+
+	//must be a template func
+	std::vector<Item*> getOnlyOneTypeOfItem(const std::string& typeItem) const;
+	std::vector<User*> getOnlyOneTypeOfUser(const std::string& typeUser) const;
+
 private:
+	void copyDynamic(const Library& other);
+	void freeDynamic();
 	std::vector<User*> users;
 	std::vector<Item*> items;
 
-	const User* currentLoggedUser;
+	User* currentLoggedUser;
 };
-

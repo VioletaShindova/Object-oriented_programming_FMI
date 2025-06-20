@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Item.h"
+#include "HelperFunctions.h"
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -87,7 +88,13 @@ public:
 
 	Item* clone() const override;
 
-	void saveToFile(const std::string& fileName) const;
+	void saveToFile(const std::string& fileName) const override;
+
+	void saveAllToFile(std::ofstream& ofs) const override;
+
+	std::string getType() const override;
+
+	static Periodical* loadFromFile(const std::string& line);
 
 private:
 	bool isValidMonth(int monthPublished) const;

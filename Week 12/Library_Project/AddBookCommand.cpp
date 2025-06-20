@@ -73,9 +73,6 @@ void AddBookCommand::execute() const
 
 	lib.addItem(newBook);
 
-	newBook->saveToFile("books.txt");
-	newBook->saveToFile("items.txt");
-
 	std::cout << "Book successfully added!\n";
 }
 

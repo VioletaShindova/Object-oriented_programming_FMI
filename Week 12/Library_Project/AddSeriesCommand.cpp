@@ -104,9 +104,6 @@ void AddSeriesCommand::execute() const
 
 	lib.addItem(newSeries);
 
-	newSeries->saveToFile("series.txt");
-	newSeries->saveToFile("items.txt");
-
 	std::cout << "Series successfully added!\n";
 }
 

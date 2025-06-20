@@ -85,9 +85,6 @@ void AddNewsletterCommand::execute() const
 
 	lib.addItem(newsletter);
 
-	newsletter->saveToFile("newsletters.txt");
-	newsletter->saveToFile("items.txt");
-
 	std::cout << "Newsletter successfully added!\n";
 }
 

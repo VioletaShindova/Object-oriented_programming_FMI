@@ -50,31 +50,9 @@ static bool isDigit(char symbol)
 	return '0' <= symbol && symbol <= '9';
 }
 
-static bool isCorrectISBN(const char* ISBN)
-{
-	if (!ISBN)
-		throw std::invalid_argument("Invalid ISBN\n");
-
-	size_t dashCounter = 0;
-
-	const char* ptr = ISBN;
-
-	while (*ptr)
-	{
-		if (*ptr == '-')
-			dashCounter++;
-		else if (!isdigit(*ptr) && *ptr != '-')
-			break;
-
-		ptr++;
-	}
-
-	return dashCounter == 4;
-}
-
 void Book::setISBN(const char* ISBN)
 {
-	if (!ISBN || strlen(ISBN) != GlobalConstants::SIZE_ISBN || !isCorrectISBN(ISBN))
+	if (!ISBN || strlen(ISBN) < 13 || strlen(ISBN) > GlobalConstants::SIZE_ISBN || !isCorrectISBN(ISBN)) //GlobalConstants::SIZE_ISBN=20
 		throw std::invalid_argument("Invalid ISBN\n");
 
 	strcpy(this->ISBN, ISBN);
@@ -97,7 +75,6 @@ const char* Book::getISBN() const noexcept
 
 void Book::print() const
 {
-	std::cout << "Book: \n";
 	std::cout << "Title: " << getTitle() << "\n";
 	std::cout << "Author: " << getAuthor() << "\n";
 	std::cout << "Publisher: " << getPublisher() << "\n";
@@ -146,8 +123,55 @@ void Book::saveToFile(const std::string& fileName) const
 	ofs.close();
 }
 
+void Book::saveAllToFile(std::ofstream& ofs) const
+{
+	if (!ofs.is_open() || !ofs.good())
+		throw std::runtime_error("Something wrong with stream - it is either bad or it can't be opened\n");
+
+	ofs << getID() << "," << getTitle() << "," << getPublisher() << "," << getGenre() << ","
+		<< getDescription() << "," << getYearPublished() << "," << getRating();
+
+	ofs << "," << author;
+
+	// keyWords with ~ as separator
+	ofs << ",";
+
+	for (size_t i = 0; i < keyWords.size(); ++i) {
+		ofs << keyWords[i];
+		if (i != keyWords.size() - 1)
+			ofs << "~";
+	}
+
+	ofs << "," << ISBN << std::endl;
+}
+
+std::string Book::getType() const
+{
+	return "Book";
+}
+
+Book* Book::loadFromFile(const std::string& line)
+{
+	std::vector<std::string> tokens = split(line, ',');
+	if (tokens.size() < 9) throw std::runtime_error("Invalid book format");
+
+	unsigned id = parseToInt(tokens[0]);
+	std::string title = tokens[1];
+	std::string publisher = tokens[2];
+	std::string genre = tokens[3];
+	std::string description = tokens[4];
+	int year = parseToInt(tokens[5]);
+	int rating = parseToInt(tokens[6]);
+	std::string author = tokens[7];
+	std::vector<std::string> keywords = split(tokens[8], '~');
+	std::string isbn = tokens[9];
+
+	Book* b = new Book(title, publisher, genre, description, year, rating, author, keywords, isbn.c_str());
+
+	return b;
+}
+
 Item* Book::clone() const
 {
 	return new Book(*this);
 }
-

@@ -35,7 +35,14 @@ public:
 
 	virtual void print() const = 0;
 
-	//virtual void saveToFile(const std::string& fileName) const;
+	virtual void saveToFile(const std::string& fileName) const = 0;
+
+	virtual void saveAllToFile(std::ofstream& ofs) const = 0; //meaning flush all info when the dtor of library is called
+
+	static void writeIDToTextFile(const char* fileName);
+	static void readIDFromTextFile(const char* fileName);
+
+	virtual std::string getType() const = 0;
 
 protected:
 
@@ -46,7 +53,7 @@ private:
 	std::string description;
 	unsigned yearPublished; 
 	unsigned rating;
-	unsigned id;
+	unsigned id = 1;
 
 	static unsigned currentID;
 };

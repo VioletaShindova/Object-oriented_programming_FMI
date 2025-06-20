@@ -11,6 +11,8 @@
 #include "AddBookCommand.h"
 #include "AddSeriesCommand.h"
 #include "AddNewsletterCommand.h"
+#include "HelpCommand.h"
+#include "ExitCommand.h"
 
 class CommandFactory
 {
