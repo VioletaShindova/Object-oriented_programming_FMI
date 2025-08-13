@@ -27,8 +27,8 @@ Drink* Alcoholic::clone() const
 
 void Alcoholic::setProMille(int proMille)
 {
-    if (proMille < 0)
-        throw std::invalid_argument("Pro mille must be a positive number\n");
+    if (proMille < 5 || proMille > 98)
+        throw std::invalid_argument("Pro mille must be between 5 and 98\n");
 
     this->proMille = proMille;
 }

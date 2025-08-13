@@ -33,9 +33,33 @@ Drink::~Drink() noexcept
 	freeDynamic();
 }
 
+static bool areValidLatinSymbols(const char* name)
+{
+	if (!name)
+		throw std::invalid_argument("Empty name\n");
+
+	bool res = true;
+
+	while (*name)
+	{
+		if ((*name) < 'a' || (*name) > 'z')
+		{
+			res = false;
+			break;
+		}
+		name++;
+	}
+	return res;
+}
+
+static bool isValidName(const char* name)
+{
+	return name && (*name) >= 'A' && (*name) <= 'Z' && areValidLatinSymbols(name + 1);
+}
+
 void Drink::setName(const char* name)
 {
-	if (!name || !strlen(name))
+	if (!name || !strlen(name) || !isValidName(name))
 		throw std::invalid_argument("Invalid name\n");
 
 	char* temp = new (std::nothrow) char[strlen(name) + 1];
@@ -50,10 +74,18 @@ void Drink::setName(const char* name)
 
 void Drink::setML(int ml)
 {
-	if (ml < 0)
-		throw std::invalid_argument("ML must be a positive number\n");
+	if (ml < 200 || ml > 1000)
+		throw std::invalid_argument("ML must be between 200 and 1000\n");
 
 	this->ml = ml;
+}
+
+void Drink::setCounOfEachDrink(int count)
+{
+	if (countOfEachDrink + count < 0)
+		throw std::logic_error("There are less than 0 bottles\n");
+
+	countOfEachDrink += count;
 }
 
 void Drink::freeDynamic()

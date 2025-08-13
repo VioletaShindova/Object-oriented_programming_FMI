@@ -1,6 +1,9 @@
 #include "Bar.hpp"
 #include "Drink.hpp"
+#include "Alcoholic.hpp"
+#include "NonAlcoholic.h"
 
+unsigned Bar::countOfAllDrinks = 0;
 unsigned Bar::drinksSold = 0;
 unsigned Bar::mlSold = 0;
 
@@ -40,7 +43,7 @@ void Bar::setCapacity(int capacity)
 	if (capacity < 0)
 		throw std::invalid_argument("Capcity must be a positve number\n");
 
-	Drink** temp = new (std::nothrow) Drink * [capacity * 2 + 1] {nullptr};
+	Drink** temp = new (std::nothrow) Drink * [capacity] {nullptr};
 
 	if (!temp)
 		throw std::bad_alloc();
@@ -58,40 +61,43 @@ void Bar::setCapacity(int capacity)
 	delete[] drinks;
 
 	drinks = temp;
-	this->capacity = capacity * 2 + 1;
+	this->capacity = capacity;
 }
 
 void Bar::addDrink(const Drink* drinkToAdd)
 {
-	if (!drinkToAdd)
-		throw std::invalid_argument("Invalid drink\n");
-
-	for (size_t i = 0; i < size; i++)
-	{
-		if (drinkToAdd == drinks[i])
-		{
-			countOfEachDrink++;
-			return;
-		}
-	}
-
-	if (size + 1 >= capacity)
-		resize();
-
-	drinks[size++] = drinkToAdd->clone();
-	countOfEachDrink++;
-}
-
-void Bar::addDrink(const Drink* drinkToAdd, int count)
-{
-	if (!drinkToAdd || count <= 0)
-		throw std::invalid_argument("Invalid drink\n");
+	if (!drinkToAdd || countOfAllDrinks + 1 > GlobalConstants::DRINKS_CAPACITY)
+		throw std::invalid_argument("Invalid drink or out of space\n");
 
 	for (size_t i = 0; i < size; i++)
 	{
 		if (*drinkToAdd == *drinks[i])
 		{
-			countOfEachDrink += count;
+			countOfAllDrinks++;
+			drinks[i]->setCounOfEachDrink(1);
+			return;
+		}
+	}
+
+	if (size + 1 > capacity)
+		resize();
+
+	drinks[size] = drinkToAdd->clone();
+	drinks[size++]->setCounOfEachDrink(1);
+	countOfAllDrinks++;
+}
+
+void Bar::addDrink(const Drink* drinkToAdd, int count)
+{
+	if (!drinkToAdd || countOfAllDrinks + 1 > GlobalConstants::DRINKS_CAPACITY)
+		throw std::invalid_argument("Invalid drink or out of space\n");
+
+	for (size_t i = 0; i < size; i++)
+	{
+		if (*drinkToAdd == *drinks[i])
+		{
+			countOfAllDrinks += count;
+			drinks[i]->setCounOfEachDrink(count);
 			return;
 		}
 	}
@@ -99,14 +105,73 @@ void Bar::addDrink(const Drink* drinkToAdd, int count)
 	if (size + 1 >= capacity)
 		resize();
 
-	drinks[size++] = drinkToAdd->clone();
-	countOfEachDrink += count;
+	drinks[size] = drinkToAdd->clone();
+	drinks[size++]->setCounOfEachDrink(count);
+	countOfAllDrinks += count;
+}
+
+void Bar::getDrink()
+{
+	if (!size)
+		throw std::logic_error("There are no drinks\n");
+
+	bool res = false;
+	size_t tempCount = 0;
+	size_t tempInd = 0;
+	for (size_t i = 0; i < size; i++)
+	{
+		if (drinks[i] && dynamic_cast<const NonAlcoholic*>(drinks[i]))
+		{
+			if (drinks[i]->getCountOfEachDrink() > 0 && drinks[i]->getCountOfEachDrink() > tempCount)
+			{
+				tempInd = i;
+				tempCount = drinks[i]->getCountOfEachDrink();
+				res = true;
+			}
+		}
+	}
+
+	if (res)
+	{
+		increaseMLSold(drinks[tempInd]->getML());
+		increaseDrinkSold();
+		drinks[tempInd]->setCounOfEachDrink(-1);
+	}
+}
+
+void Bar::getAlcoholDrink()
+{
+	if (!size)
+		throw std::logic_error("There are no drinks\n");
+
+	bool res = false;
+	size_t tempCount = 0;
+	size_t tempInd = 0;
+	for (size_t i = 0; i < size; i++)
+	{
+		if (drinks[i] && dynamic_cast<const Alcoholic*>(drinks[i]))
+		{
+			if (drinks[i]->getCountOfEachDrink() > 0 && drinks[i]->getCountOfEachDrink() > tempCount)
+			{
+				tempInd = i;
+				tempCount = drinks[i]->getCountOfEachDrink();
+				res = true;
+			}
+		}
+	}
+
+	if (res)
+	{
+		increaseMLSold(drinks[tempInd]->getML());
+		increaseDrinkSold();
+		drinks[tempInd]->setCounOfEachDrink(-1);
+	}
 }
 
 void Bar::getDrink(const Drink* drinkToGet)
 {
-	if (!drinkToGet)
-		throw std::invalid_argument("Invalid drink\n");
+	if (!drinkToGet || !size)
+		throw std::invalid_argument("Invalid drink or there are no drinks\n");
 
 	bool res = false;
 
@@ -114,9 +179,10 @@ void Bar::getDrink(const Drink* drinkToGet)
 	{
 		if (*drinkToGet == *drinks[i])
 		{
-			if (countOfEachDrink)
+			if (drinks[i]->getCountOfEachDrink() >= 0)
 			{
-				countOfEachDrink--;
+				drinks[i]->setCounOfEachDrink(-1);
+				countOfAllDrinks--;
 				increaseMLSold(drinkToGet->getML());
 				increaseDrinkSold();
 				return;
@@ -163,33 +229,33 @@ void Bar::freeDynamic()
 
 void Bar::copyDynamic(const Bar& other)
 {
-	Drink** drinks = new (std::nothrow) Drink * [other.capacity];
+	Drink** newDrinks = new (std::nothrow) Drink * [other.capacity];
 
-	if (!drinks)
+	if (!newDrinks)
 		throw std::bad_alloc();
 
 	for (size_t i = 0; i < other.size; i++)
 	{
 		try {
-			drinks[i] = other.drinks[i] ? other.drinks[i]->clone() : nullptr;
+			newDrinks[i] = other.drinks[i] ? other.drinks[i]->clone() : nullptr;
 		}
 		catch (const std::bad_alloc& bad_alloc)
 		{
 			for (size_t j = 0; j < i; j++)
 			{
-				delete drinks[j];
+				delete newDrinks[j];
 			}
-			delete[] drinks;
+			delete[] newDrinks;
 			throw bad_alloc;
 		}
 	}
 
-	this->drinks = drinks;
+	this->drinks = newDrinks;
 }
 
 void Bar::resize()
 {
-	Drink** temp = new (std::nothrow) Drink * [capacity * 2 + 1];
+	Drink** temp = new (std::nothrow) Drink * [capacity * 2 + 1] {nullptr};
 
 	if (!temp)
 		throw std::bad_alloc();
@@ -213,6 +279,7 @@ void Bar::resize()
 	for (size_t i = 0; i < size; i++)
 		delete drinks[i];
 	delete[] drinks;
+	
 	drinks = temp;
 	((capacity *= 2) += 1);
 }

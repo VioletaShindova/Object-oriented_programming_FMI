@@ -5,6 +5,10 @@
 #define __BAR_HEADER_INCLUDED
 #include <iostream>
 
+namespace GlobalConstants {
+	constexpr size_t DRINKS_CAPACITY = 100;
+}
+
 class Drink;
 
 class Bar
@@ -25,7 +29,9 @@ public:
 	void addDrink(const Drink* drinkToAdd);
 	void addDrink(const Drink* drinkToAdd, int count);
 
-	void getDrink(const Drink* drinkToGet); 
+	void getDrink();		
+	void getAlcoholDrink();		
+	void getDrink(const Drink* drinkToGet);		
 
 	static unsigned getAlocholDrinksSold();
 	static unsigned getMLSold();
@@ -41,7 +47,7 @@ private:
 	Drink** drinks;
 	size_t size;
 	size_t capacity;
-	unsigned countOfEachDrink;
+	static unsigned countOfAllDrinks;
 	static unsigned drinksSold;
 	static unsigned mlSold;
 };

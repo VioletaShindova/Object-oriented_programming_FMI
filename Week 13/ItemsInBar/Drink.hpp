@@ -19,9 +19,11 @@ public:
 
 	void setName(const char* name);
 	void setML(int ml);
+	void setCounOfEachDrink(int count);
 
 	inline const char* getName() const noexcept { return name; }
 	inline unsigned getML() const noexcept { return ml; }
+	inline unsigned getCountOfEachDrink() const noexcept { return countOfEachDrink; }
 
 	friend bool operator==(const Drink& lhs, const Drink& rhs);
 	friend bool operator!=(const Drink& lhs, const Drink& rhs);
@@ -31,6 +33,7 @@ private:
 
 	char* name;
 	unsigned ml;
+	unsigned countOfEachDrink = 0;
 };
 
 #endif

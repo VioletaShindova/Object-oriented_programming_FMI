@@ -11,15 +11,18 @@ int main()
 {
 	Bar b;
 
-	Drink** drinks = new Drink * [3];
+	Drink** drinks = new Drink * [4];
 	drinks[0] = new NonAlcoholic("Coke", 330);
 	drinks[1] = new NonAlcoholic("Fanta", 500);
 	drinks[2] = new Alcoholic("Zagorka", 500, 5);
+	drinks[3] = new Alcoholic("Pirinsko", 500, 5);
 
 	b.addDrink(drinks[0], 2); //2x Coca cola 330 ml
 
 	b.addDrink(drinks[1]);   //1x Fanta 500 ml
 	b.addDrink(drinks[2]);   //Zagorka 500 ml
+	b.addDrink(drinks[2]);   //Zagorka 500 ml
+	b.addDrink(drinks[3]);   //Pirinsko 500 ml
 
 	b.getDrink(drinks[2]);
 
